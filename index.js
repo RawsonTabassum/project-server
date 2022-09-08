@@ -18,6 +18,7 @@ async function run() {
         const routineCollection = client.db('ruet_transport').collection('routine');
         const busCollection = client.db('ruet_transport').collection('bus_info');
         const bookingCollection = client.db('ruet_transport').collection('booking');
+        const employeeCollection = client.db('ruet_transport').collection('employee');
 
         app.get('/routine', async(req, res)=> {
             const query = {};
@@ -36,9 +37,19 @@ async function run() {
 
         app.post('/booking', async(req, res)=> {
             const booking = req.body;
-            const query = {_id: booking._id};
             const result = await bookingCollection.insertOne(booking);
-            res.send(result, busResult);
+            res.send(result);
+        })
+
+        app.get('/history', async(req, res)=> {
+            const query = {};
+            const cursor = await bookingCollection.find(query).toArray();
+            res.send(cursor);
+        })
+        app.get('/employee', async(req, res)=> {
+            const query = {};
+            const cursor = await employeeCollection.find(query).toArray();
+            res.send(cursor);
         })
     }
     finally{
