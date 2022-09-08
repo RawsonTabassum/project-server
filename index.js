@@ -10,9 +10,41 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.htyzaba.mongodb.net/?retryWrites=true&w=majority`;
-//const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-console.log(uri);
+async function run() {
+    try{
+        await client.connect();
+        const routineCollection = client.db('ruet_transport').collection('routine');
+        const busCollection = client.db('ruet_transport').collection('bus_info');
+        const bookingCollection = client.db('ruet_transport').collection('booking');
+
+        app.get('/routine', async(req, res)=> {
+            const query = {};
+            const cursor = routineCollection.find(query);
+
+            const routine = await cursor.toArray();
+            res.send(routine);
+        })
+        app.get('/bus', async(req, res)=> {
+            const query = {};
+            const cursor = busCollection.find(query);
+
+            const bus = await cursor.toArray();
+            res.send(bus);
+        })
+
+        app.post('/booking', async(req, res)=> {
+            const booking = req.body;
+            const query = {_id: booking._id};
+            const result = await bookingCollection.insertOne(booking);
+            res.send(result, busResult);
+        })
+    }
+    finally{
+
+    }
+}
 
 app.get('/', (req, res)=> {
     res.send("working?");
@@ -21,3 +53,5 @@ app.get('/', (req, res)=> {
 app.listen(port, ()=> {
     console.log("Listening", port);
 })
+
+run().catch(console.dir);
