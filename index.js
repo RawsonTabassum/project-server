@@ -35,17 +35,19 @@ async function run() {
             res.send(bus);
         })
 
-        app.post('/booking', async(req, res)=> {
-            const booking = req.body;
-            const result = await bookingCollection.insertOne(booking);
-            res.send(result);
-        })
-
-        app.get('/history', async(req, res)=> {
+        app.get('/booking', async(req, res)=> {
             const query = {};
             const cursor = await bookingCollection.find(query).toArray();
             res.send(cursor);
         })
+
+        // app.post('/booking', async(req, res)=> {
+        //     const booking = req.body;
+        //     const result = await bookingCollection.insertOne(booking);
+        //     res.send(result);
+        // })
+
+        
         app.get('/employee', async(req, res)=> {
             const query = {};
             const cursor = await employeeCollection.find(query).toArray();
